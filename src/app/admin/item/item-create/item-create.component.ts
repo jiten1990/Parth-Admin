@@ -20,7 +20,7 @@ import { Ng4LoadingSpinnerService } from "ng4-loading-spinner";
 import * as ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { ChangeEvent } from "@ckeditor/ckeditor5-angular/ckeditor.component";
 import { Observable } from "rxjs";
-import { map, catchError, tap, ignoreElements } from "rxjs/operators";
+import { map, catchError, tap, ignoreElements, single } from "rxjs/operators";
 import { Response } from "selenium-webdriver/http";
 // import { element } from '@angular/core/src/render3';
 import { environment } from "../../../../environments/environment";
@@ -45,7 +45,7 @@ export class ItemCreateComponent implements OnInit {
     description: "",
     short_description: "",
     laminate: {},
-    hardwares: [],
+    hardware_IDs: [],
     warranty_detail: "",
     meta_description: "",
     meta_keywords: "",
@@ -120,12 +120,20 @@ export class ItemCreateComponent implements OnInit {
         (response: { success: number; message: string; item: [] }) => {
           if (response.success == 1) {
             this.itemObj = response.item;
+
+            this.itemObj.hardware_IDs = [];
+
+            this.itemObj.hardwares.forEach( value => {
+                this.itemObj.hardware_IDs.push(value.hardware_ID);
+            }); 
+
           }
         }
       );
   }
 
   saveItem() {
+
     let formData = new FormData();
     formData.append("apiId", environment.apiId);
     formData.append("from_app", "true");
@@ -139,7 +147,22 @@ export class ItemCreateComponent implements OnInit {
     formData.append("label_to", this.itemObj.label_to);
     formData.append("description", this.itemObj.description);
     formData.append("short_description", this.itemObj.short_description);
-    formData.append("hardwares", JSON.stringify(this.itemObj.hardwares));
+
+    var sort_order = 1;
+    var hardwares = [];
+
+    this.itemObj.hardware_IDs.forEach(single_ID => {
+        var Obj = {
+          hardware_ID : single_ID,
+          sort_order : sort_order
+        }
+
+        hardwares.push(Obj);
+
+        sort_order++;
+    });
+
+    formData.append("hardwares", JSON.stringify(hardwares));
     formData.append("laminate_ID", this.itemObj.laminate_ID);
     formData.append("warranty_detail", this.itemObj.warranty_detail);
     formData.append("meta_description", this.itemObj.meta_description);

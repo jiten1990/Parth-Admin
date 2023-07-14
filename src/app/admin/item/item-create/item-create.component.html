@@ -191,7 +191,7 @@
                     <div class="col-md-12">
                       <div class="form-group" *ngFor="let item of hardwares_List">
                         <label for="hardware_{{item.hardware_ID}}">
-                          <input type="checkbox" name="hardware_{{item.hardware_ID}}" [(checklist)]="itemObj.hardwares" [checklistValue]="{ 'hardware_ID': item.hardware_ID, 'sort_order' : item.hardware_ID }" id="hardware_{{item.hardware_ID}}" class="rounded-checkbox">
+                          <input type="checkbox" name="hardware_{{item.hardware_ID}}" [(checklist)]="itemObj.hardware_IDs" [checklistValue]="item.hardware_ID" id="hardware_{{item.hardware_ID}}" class="rounded-checkbox">
                           <span class="commonSpan">{{ item.hardware }}&nbsp;</span>
                         </label>
                       </div>
